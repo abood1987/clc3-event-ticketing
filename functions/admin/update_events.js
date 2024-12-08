@@ -14,8 +14,12 @@ exports.updateEvent = functions.https.onCall((data, context) => {
     // Prepare the data to be updated; ensure not to overwrite ticketsRemaining unintentionally
     const updateData = {};
     if (data.name) updateData.name = data.name;
-    if (data.date) updateData.date = data.date;
-    if (data.time) updateData.time = data.time;
+    if (data.datetime) {
+        if (new Date(data.datetime).toString() === "Invalid Date") {
+          throw new functions.https.HttpsError('invalid-argument', 'Invalid datetime format provided.');
+        }
+        updateData.datetime = data.datetime;
+    }
     if (data.location) updateData.location = data.location;
     if (data.price) updateData.price = data.price;
     if (data.totalTickets) {
